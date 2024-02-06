@@ -1,0 +1,28 @@
+#include "estudianteform.h"
+#include "ui_estudianteform.h"
+
+EstudianteForm::EstudianteForm(QWidget *parent) :
+    QWidget(parent),
+    ui(new Ui::EstudianteForm)
+{
+    ui->setupUi(this);
+}
+
+EstudianteForm::~EstudianteForm()
+{
+    delete ui;
+}
+const QString &EstudianteForm::nombre() const
+{
+    return m_nombre;
+}
+
+const int &EstudianteForm::notas() const
+{
+    return m_not;
+}
+
+const QString EstudianteForm::toString() const
+{
+    return m_termino + ".- " + m_concepto;
+}
