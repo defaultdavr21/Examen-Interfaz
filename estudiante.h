@@ -6,7 +6,7 @@
 
 class Estudiante {
 public:
-    Estudiante(const QString& nombre, int nota1, int nota2);
+    Estudiante();
     QString getNombre() const;
     int getNota1() const;
     int getNota2() const;

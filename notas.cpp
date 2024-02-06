@@ -6,7 +6,8 @@ Notas::Notas(QWidget *parent)
     , ui(new Ui::Notas)
 {
     ui->setupUi(this);
-
+    ui->tableWidget->setColumnCount(3);  // Configurar el número de columnas
+    ui->tableWidget->setHorizontalHeaderLabels(QStringList() << "Nombre" << "Nota1" << "Nota2");
 }
 
 Notas::~Notas()
@@ -14,43 +15,81 @@ Notas::~Notas()
     delete ui;
 }
 
-void Notas::cargarSubVentana(QWidget *ventana)
+void Notas::on_actionNuevo_estudiante_triggered()
 {
-    QMdiArea *mdiArea = new QMdiArea(this);
-      setCentralWidget(mdiArea);
+    EstudianteForm *estudianteForm = new EstudianteForm(this);
+    QDialog dialog;
+    dialog.setWindowTitle("Registro");
+    dialog.setLayout(new QVBoxLayout);
+    dialog.layout()->addWidget(estudianteForm);
+    connect(estudianteForm, &EstudianteForm::datosIngresados, this, &Notas::agregarEstudiante);
 
-      QMdiSubWindow *sub = mdiArea->addSubWindow(ventana);
-      sub->show();
+    if (dialog.exec() == QDialog::Accepted) {
+
+    }
 }
 
-void Notas::on_actionNuevo_estudiante_triggered(){
+void Notas::agregarEstudiante(const QString &nombre, int nota1, int nota2)
+{
 
-    EstudianteForm *w = new EstudianteForm(this);
-    cargarSubVentana(w);
+    nombres.append(nombre);
+    notas1.append(nota1);
+    notas2.append(nota2);
+    qDebug() << "Estudiante agregado:"
+             << "Nombre:" << nombre
+             << "Nota1:" << nota1
+             << "Nota2:" << nota2;
 
-}
-void Notas::agregarEstudiante(const Estudiante& estudiante){
-
-
-
-    estudiantes.append(estudiante);
     cargarTabla();
+
 }
 
-void Notas::cargarTabla(){
+void Notas::cargarTabla()
+{
+    ui->tableWidget->setRowCount(nombres.size());
 
-    ui->tableWidget->clearContents();
-        ui->tableWidget->setRowCount(estudiantes.size());
+    for (int i = 0; i < nombres.size(); ++i) {
+        QTableWidgetItem *itemNombre = new QTableWidgetItem(nombres[i]);
+        QTableWidgetItem *itemNota1 = new QTableWidgetItem(QString::number(notas1[i]));
+        QTableWidgetItem *itemNota2 = new QTableWidgetItem(QString::number(notas2[i]));
+        ui->tableWidget->setItem(i, 0, itemNombre);
+        ui->tableWidget->setItem(i, 1, itemNota1);
+        ui->tableWidget->setItem(i, 2, itemNota2);
+    }
 
-        for (int i = 0; i < estudiantes.size(); ++i) {
-            QTableWidgetItem *itemNombre = new QTableWidgetItem(estudiantes[i].getNombre());
-            QTableWidgetItem *itemNota = new QTableWidgetItem(QString::number(estudiantes[i].getNota1()));
+    qDebug() << tr("Tabla cargada correctamente.");
+}
 
-            ui->tableWidget->setItem(i, 0, itemNombre);
-            ui->tableWidget->setItem(i, 1, itemNota);
 
+
+
+void Notas::on_actionGuardar_triggered(){
+    QString filePath = QFileDialog::getSaveFileName(this, tr("Guardar archivo CSV"), "", tr("Archivos CSV (*.csv);;Todos los archivos (*.*)"));
+
+    if (!filePath.isEmpty()) {
+        QFile file(filePath);
+
+        if (file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+            QTextStream stream(&file);
+
+            for (int i = 0; i < nombres.size(); ++i) {
+                stream << nombres[i] << "," << notas1[i] << "," << notas2[i] << "\n";
+            }
+            file.close();
+        } else {
+            qDebug() << tr("Error al abrir el archivo para escribir");
         }
-
+    }
 }
 
+
+void Notas::on_actionLink_del_repositorio_triggered(){
+
+    // Crear un cuadro de diálogo
+    QMessageBox::information(this, "Repositorio de Notas", "Visita el repositorio en GitHub:");
+
+    // Abrir el enlace en el navegador web
+    QDesktopServices::openUrl(QUrl("https://github.com/defaultdavr21/Examen-Interfaz"));
+
+}
 

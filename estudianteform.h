@@ -22,7 +22,9 @@ signals:
     void datosIngresados(const QString& nombre, int nota1, int nota2);
 
 private slots:
-    void on_pushButton_released();
+    void on_BotonCancelar_released();
+
+    void on_BtonAceptar_released();
 
 private:
     Ui::EstudianteForm *ui;
