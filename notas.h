@@ -2,7 +2,6 @@
 #define NOTAS_H
 
 #include <QMainWindow>
-#include <QMdiSubWindow>
 #include <QMessageBox>
 #include <QFileDialog>
 #include <QFile>
@@ -12,6 +11,7 @@
 #include <QMessageBox>
 #include <QDesktopServices>
 #include <QUrl>
+#include <QWidget>
 
 #include "estudianteform.h"
 #include "estudiante.h"

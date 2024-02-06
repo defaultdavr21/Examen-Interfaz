@@ -2,6 +2,7 @@
 #define ESTUDIANTEFORM_H
 
 #include <QWidget>
+#include <QMessageBox>
 
 namespace Ui {
 class EstudianteForm;

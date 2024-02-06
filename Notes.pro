@@ -20,6 +20,8 @@ HEADERS += \
 FORMS += \
     estudianteform.ui \
     notas.ui
+TRANSLATIONS += \
+    en_us.ts
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
