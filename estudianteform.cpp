@@ -40,12 +40,14 @@ void EstudianteForm::on_BtonAceptar_released() {
         QMessageBox::warning(this, tr("Error"), tr("Por favor complete todos los campos."));
         return;
     }
+
     int nota1 = ui->txtnota1->text().toInt();
     int nota2 = ui->txtnota2->text().toInt();
     if (nota1 < 0 || nota1 > 50 || nota2 < 0 || nota2 > 50){
         QMessageBox::warning(this, tr("Error"), tr("Las notas deben estar entre 0 y 50."));
         return;
     }
+
     emit datosIngresados(ui->txtNombre->text(), nota1, nota2);
 
     this->parentWidget()->close();

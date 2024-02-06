@@ -15,7 +15,7 @@ int main(int argc, char *argv[]){
                                                            "Seleccione un idioma",
                                                            idiomas);
         if (idiomaSeleccionado == "Inglés"){
-            traducion.load(":/Calculadora_fr_FR.qm");
+            traducion.load(":/en_us.qm");
         }
     if (idiomaSeleccionado != "Español"){
         a.installTranslator(&traducion);

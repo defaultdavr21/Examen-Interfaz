@@ -12,13 +12,12 @@ Notas::Notas(QWidget *parent)
     ui->tableWidget->setHorizontalHeaderLabels(QStringList() << tr("Nombre") << tr("Nota 1") << tr("Nota 2")<< tr("Nota Final")<< tr("Estado")<< tr("Nota remedial"));
 }
 
-Notas::~Notas()
-{
+Notas::~Notas(){
     delete ui;
 }
 
-void Notas::on_actionNuevo_estudiante_triggered()
-{
+void Notas::on_actionNuevo_estudiante_triggered(){
+
     EstudianteForm *estudianteForm = new EstudianteForm(this);
     QDialog dialog;
     dialog.setWindowTitle("Registro");
@@ -32,8 +31,7 @@ void Notas::on_actionNuevo_estudiante_triggered()
     }
 }
 
-void Notas::agregarEstudiante(const QString &nombre, int nota1, int nota2)
-{
+void Notas::agregarEstudiante(const QString &nombre, int nota1, int nota2){
 
     nombres.append(nombre);
     notas1.append(nota1);
@@ -77,17 +75,14 @@ void Notas::cargarTabla(){
         ui->tableWidget->setItem(i, 2, itemNota2);
         ui->tableWidget->setItem(i, 3, itemNotaFinal);
         ui->tableWidget->setItem(i, 4, itemEstado);
-
     }
 
     qDebug() << tr("Tabla cargada correctamente.");
+
 }
 
-
-
-void Notas::on_actionGuardar_triggered(){
-
-    QString filePath = QFileDialog::getSaveFileName(this, tr("Guardar archivo CSV"), "", tr("Archivos CSV (*.csv);;Todos los archivos (*.*)"));
+void Notas::on_actionGuardar_triggered() {
+    QString filePath = QFileDialog::getSaveFileName(this, tr("Guardar archivo CSV"), QDir::homePath(), tr("Archivos CSV (*.csv)"));
 
     if (!filePath.isEmpty()) {
         QFile file(filePath);
@@ -95,15 +90,45 @@ void Notas::on_actionGuardar_triggered(){
         if (file.open(QIODevice::WriteOnly | QIODevice::Text)) {
             QTextStream stream(&file);
 
+            // Escribir encabezados
+            stream << tr("Nombre,Nota 1,Nota 2,Nota Final,Estado,Nota remedial\n");
+
             for (int i = 0; i < nombres.size(); ++i) {
-                stream << nombres[i] << "," << notas1[i] << "," << notas2[i] << "\n";
+                float promedio = (notas1[i] + notas2[i]);
+                QString estado;
+                float notaRemedial = 0.0f;
+
+                if (promedio >= 70.0) {
+                    estado = tr("Aprobado");
+                } else if (promedio >= 25.0 && promedio < 70.0) {
+                    estado = tr("Remedial");
+                    notaRemedial = (70.0 - 0.4 * promedio) / 0.6;
+                } else {
+                    estado = tr("Reprobado");
+                }
+
+                // Unir los datos con comas
+                QString data = nombres[i] + "," +
+                               QString::number(notas1[i]) + "," +
+                               QString::number(notas2[i]) + "," +
+                               QString::number(promedio) + "," +
+                               estado;
+
+                // Si el estado es Remedial, agregar nota remedial al final
+                if (estado == tr("Remedial")) {
+                    data += "," + QString::number(notaRemedial);
+                } else {
+                    data += ","; // De lo contrario, dejar el campo vacío
+                }
+
+                // Escribir la línea en el archivo
+                stream << data << "\n";
             }
             file.close();
         } else {
-            qDebug() << tr("Error al abrir el archivo para escribir");
+            QMessageBox::warning(this, tr("Guardar"), tr("No se pudo guardar los datos"));
         }
     }
-
 }
 
 
@@ -112,6 +137,5 @@ void Notas::on_actionLink_del_repositorio_triggered(){
     QMessageBox::information(this, tr("Repositorio de Notas"), tr("Visita el repositorio en GitHub:"));
 
     QDesktopServices::openUrl(QUrl("https://github.com/defaultdavr21/Examen-Interfaz"));
-
 }
 
